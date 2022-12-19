@@ -3,6 +3,7 @@
 // Copyright (c) 2022 Antonin Hérault
 
 pub mod locales;
+pub mod strings;
 
 use locales::Locale;
 
