@@ -10,7 +10,7 @@ use countries::CountryCode;
 use languages::Language;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct Locale(Language, CountryCode);
+pub struct Locale(pub Language, pub CountryCode);
 
 impl Locale {
     pub fn from_string(locale: &str) -> Locale {
