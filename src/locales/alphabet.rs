@@ -2,7 +2,7 @@
 // Under the MIT License
 // Copyright (c) 2022 Antonin Hérault
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum Alphabet {
     Latin,
     Cyrillic,

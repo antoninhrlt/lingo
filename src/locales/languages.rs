@@ -4,7 +4,7 @@
 
 use super::alphabet::Alphabet;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Language {
     pub code: LanguageCode,
     alphabet: Alphabet,
@@ -32,7 +32,7 @@ impl Language {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum LanguageCode {
     ar,
     r#as,

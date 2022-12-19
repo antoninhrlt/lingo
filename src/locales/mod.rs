@@ -9,7 +9,7 @@ pub mod languages;
 use countries::CountryCode;
 use languages::Language;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Locale(pub Language, pub CountryCode);
 
 impl Locale {
