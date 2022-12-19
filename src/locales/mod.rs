@@ -26,6 +26,14 @@ impl Locale {
             format!("{}", self.0.to_code())
         }
     }
+
+    pub fn language(&self) -> &Language {
+        &self.0
+    }
+
+    pub fn country_code(&self) -> &CountryCode {
+        &self.1
+    }
 }
 
 #[cfg(test)]
