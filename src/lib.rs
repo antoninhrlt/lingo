@@ -15,11 +15,11 @@ pub fn hello() {
 #[macro_export]
 macro_rules! strings {
     ($string:expr) => {
-        HashMap::from([$string])
+        std::collections::HashMap::from([$string])
     };
 
     ($($strings:expr),*) => {
-        HashMap::from([
+        std::collections::HashMap::from([
             $($strings),*
         ])
     };
@@ -35,7 +35,7 @@ macro_rules! s {
 #[macro_export]
 macro_rules! lingo {
     ($($strings:expr),*) => {
-        Lingo::with_system_context_locale(locale!("en"), strings!($($strings),*))
+        crate::Lingo::with_system_context_locale(crate::locale!("en"), crate::strings!($($strings),*))
     };
 }
 
