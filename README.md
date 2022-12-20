@@ -30,7 +30,7 @@ lingo.set_context_locale(/* app locale */);
 // If not set, it's `locale!("en")`.
 lingo.set_default_locale(/* locale */);
 
-println!("{}", get_string(&lingo, "<identifier>").unwrap());
+println!("{}", lingo.string("<identifier>").unwrap());
 ```
 
 - ## Locale
@@ -70,11 +70,14 @@ let mut lingo = lingo![
 lingo.set_context_locale(locale!("fr_FR"));
 lingo.set_default_locale(locale!("fr_FR"));
 
-println!("{}", get_string(&lingo, "hello_world").unwrap());
-println!("{}", get_string(&lingo, "love").unwrap());
+println!("{}", lingo.string("hello_world").unwrap());
+println!("{}", lingo.string("love").unwrap());
 ```
 
-For `"hello_world"`, there was no string for locale `fr_FR`, so `lingo` checked for any `fr_*` string and found `s!("fr_BE", "Bonjour le monde !")` then used it. 
+```
+Bonjour le monde !
+J'adore Lingo
+```
 
 If there were no `fr` string, it would use : `s!("en_GB", "Hello world!")`.
 
