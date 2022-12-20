@@ -50,48 +50,67 @@ println!("{}", lingo.string("<identifier>").unwrap());
 ## Example
 A French application using `lingo`.
 ```rust
-let mut lingo = lingo![
-    (
-        "hello_world", 
-        strings![
-            s!("fr_BE", "Bonjour le monde !"), // Belgium
-            s!("en_GB", "Hello world!")
-        ]
-    ),
-    (
-        "love", 
-        strings![
-            s!("fr_FR", "J'adore Lingo"), // France
-            s!("en_GB", "I love Lingo")
-        ]
-    )
-];
+struct MyFrenchApp {
+    lingo: Lingo,
+}
 
-lingo.set_context_locale(locale!("fr_FR"));
-lingo.set_default_locale(locale!("fr_FR"));
+impl MyFrenchApp {
+    pub fn new() -> Self {
+        Self { 
+            lingo: Self::init_lingo()
+        }
+    }
 
-println!("{}", lingo.string("hello_world").unwrap());
-println!("{}", lingo.string("love").unwrap());
+    pub fn run(&self) {
+        println!("{}", self.lingo.string("welcome").unwrap());
+    } 
+}
+
+impl LingoApp for MyFrenchApp {
+    fn init_lingo() -> Lingo {
+        let mut lingo = lingo![
+            (
+                "welcome", 
+                strings![
+                    s!("fr", "bienvenue sur l'app !"),
+                    s!("en", "welcome to the app!")
+                    // ...
+                ]
+            )
+            // ...
+        ];
+
+        lingo.set_context_locale(locale!("fr_FR"));
+        lingo
+    }
+
+    fn lingo(&self) -> &Lingo {
+        &self.lingo
+    }
+}
+
+fn main() {
+    let app = MyFrenchApp::new();
+    
+    println!("{}", app.lingo().string("welcome").unwrap());
+    
+    app.run();
+}
 ```
 
 ```
-Bonjour le monde !
-J'adore Lingo
+bienvenue sur l'app !
+bienvenue sur l'app !
 ```
-
-If there were no `fr` string, it would use : `s!("en_GB", "Hello world!")`.
 
 <details>
 
 <summary>Imports for the example</summary>
 
 ```rust
-use std::collections::HashMap;
-
+use lingo_lib::{ lingo, locale, strings, s };
+use lingo_lib::{ Lingo, LingoApp };
 use lingo_lib::locales::Locale;
-use lingo_lib::strings::get_string;
-use lingo_lib::Lingo;
-use lingo_lib::{lingo, locale, s, strings};
 ```
 
 </details>
