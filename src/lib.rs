@@ -35,7 +35,7 @@ macro_rules! s {
 #[macro_export]
 macro_rules! lingo {
     ($($strings:expr),*) => {
-        Lingo::with_system_context_locale(locale!("en"), strings!($($strings),*));
+        Lingo::with_system_context_locale(locale!("en"), strings!($($strings),*))
     };
 }
 
@@ -80,5 +80,70 @@ impl Lingo {
 
     pub fn strings(&self) -> &LingoStrings {
         &self.strings
+    }
+}
+
+/// The way to have a Lingo object in the whole application
+pub trait LingoApp {
+    fn init_lingo() -> Lingo;
+    fn lingo(&self) -> &Lingo;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+
+    struct MainApp {
+        lingo: Lingo,
+    }
+
+    impl MainApp {
+        pub fn new() -> MainApp {
+            MainApp { 
+                lingo: Self::init_lingo()
+            }
+        }
+
+        pub fn run(&self) {
+            println!("{}", self.lingo.string("hello").unwrap());
+        } 
+    }
+
+    impl LingoApp for MainApp {
+        fn init_lingo() -> Lingo {
+            let mut lingo = lingo![
+                (
+                    "hello", 
+                    strings![
+                        s!("de", "hallo Welt"),
+                        s!("en", "hello world")
+                        // ...
+                    ]
+                )
+                // ...
+            ];
+
+            lingo.set_context_locale(locale!("de_DE"));
+            // Useless because already the default locale :
+            //  lingo.set_default_locale(locale!("en"));
+            lingo
+        }
+
+        fn lingo(&self) -> &Lingo {
+            &self.lingo
+        }
+    }
+
+    #[test]
+    fn main_app() {
+        let app = MainApp::new();
+        app.run();
+
+        println!("{}", app.lingo().string("hello").unwrap());
+
+        // Output :
+        //  hallo Welt
+        //  hallo Welt
     }
 }
