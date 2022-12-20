@@ -31,8 +31,10 @@ impl Language {
     }
 }
 
+use strum_macros::EnumString;
+
 #[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, EnumString)]
 pub enum LanguageCode {
     ar,
     r#as,

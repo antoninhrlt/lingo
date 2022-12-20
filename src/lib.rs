@@ -27,6 +27,14 @@ impl Lingo {
         }
     }
 
+    pub fn with_system_context_locale(default_locale: Locale, strings: LingoStrings) -> Lingo {
+        Lingo {
+            context_locale: Locale::from_string(&sys_locale::get_locale().unwrap(), '-').unwrap(),
+            default_locale,
+            strings,
+        }
+    }
+
     pub fn context_locale(&self) -> &Locale {
         &self.context_locale
     }

@@ -2,7 +2,9 @@
 // Under the MIT License
 // Copyright (c) 2022 Antonin Hérault
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+use strum_macros::EnumString;
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash, EnumString)]
 pub enum Alphabet {
     Latin,
     Cyrillic,

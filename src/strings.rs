@@ -29,7 +29,7 @@ pub fn get_localised_string(string: &InternationalString, locale: &Locale) -> Op
 
     // The localised string was not found for the requested locale.
 
-    // Perhaps a string exists for the same language, no matter the country 
+    // Perhaps a string exists for the same language, no matter the country
     // code.
     for (locale, string) in string.iter() {
         // Does not look at the country code, just compare the language.
@@ -96,6 +96,28 @@ mod tests {
 
         // Well, there is no Arabic string for "hello_world".
         // The default locale is "en", so the "en_GB" string will be chosen.
+        println!("{}", get_string(&lingo, "hello_world").unwrap());
+    }
+
+    #[test]
+    fn from_system_locale() {
+        let fr = Locale(Language::new(LanguageCode::fr), CountryCode::None);
+        let en = Locale(Language::new(LanguageCode::en), CountryCode::None);
+        #[allow(non_snake_case)]
+        let en_GB = Locale(Language::new(LanguageCode::en), CountryCode::GB);
+        let de = Locale(Language::new(LanguageCode::de), CountryCode::None);
+
+        let lingo_strings: LingoStrings = HashMap::from([(
+            "hello_world",
+            HashMap::from([
+                (fr.clone(), "Bonjour le monde !"),
+                (en_GB, "Hello world!"),
+                (de, "Hallo Welt!"),
+            ]),
+        )]);
+
+        let lingo = Lingo::with_system_context_locale(fr, lingo_strings);
+
         println!("{}", get_string(&lingo, "hello_world").unwrap());
     }
 }
