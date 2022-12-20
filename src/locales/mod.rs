@@ -12,6 +12,13 @@ use alphabet::Alphabet;
 use countries::CountryCode;
 use languages::{ Language, LanguageCode };
 
+#[macro_export]
+macro_rules! locale {
+    ($a:expr) => {
+        Locale::from_string($a, '_').unwrap()
+    };
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Locale(pub Language, pub CountryCode);
 
