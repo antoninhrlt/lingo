@@ -8,6 +8,7 @@ pub mod languages;
 
 use std::str::FromStr;
 
+use alphabet::Alphabet;
 use countries::CountryCode;
 use languages::{ Language, LanguageCode };
 
@@ -34,18 +35,60 @@ impl Locale {
         }
 
         // Now creates the language object for the locale
-        let language = Language::new(language_code.unwrap());
+        let language = Language::new(language_code.clone().unwrap());
 
-        // Retrieves the country code
-        let country_code = parts.next();
+        // Retrieves the country code (or maybe the alphabet)
+        let country_code_or_alphabet = parts.next();
         
-        // Locale without country code
-        if country_code == None {
+        // Locale without alphabet and without country code
+        if country_code_or_alphabet == None {
             return Ok(Locale(language, CountryCode::None));
         }
 
+        // See "locales/alphabet.rs"
+        let is_alphabet = match country_code_or_alphabet.unwrap() {
+            "Latn" => true,
+            "Cyrl" => true,
+            "Hans" => true,
+            "Hant" => true,
+            _ => false,
+        };
+        
+        // `Alphabet::Unspecified` when it's the country code
+        let alphabet: Alphabet = if is_alphabet {
+            let alphabet = Alphabet::from_code(country_code_or_alphabet.unwrap());
+            match alphabet {
+                Ok(_) => {}
+                Err(_) => return Err(format!("invalid alphabet in locale '{locale}'")),
+            }
+
+            alphabet.unwrap()
+        } else {
+            Alphabet::Unspecified
+        };
+
+        // This language variable can be used both if it's the country code or 
+        // the alphabet, because it can be a `Language` with an `Unspecified` 
+        // alphabet, which would mean it's the country code and not the 
+        // alphabet.
+        let language = Language::with_alphabet(language_code.unwrap(), alphabet);
+
+        let country_code = if is_alphabet {
+            let country_code = parts.next();
+            
+            // Locale with language with alphabet but without country code
+            if country_code == None {
+                return Ok(Locale(language, CountryCode::None));
+            }
+
+            country_code
+        } else {
+            country_code_or_alphabet
+        };
+        
         // Creates a `CountryCode` object from its string code
         let country_code = CountryCode::from_str(country_code.unwrap());
+        
         match country_code {
             Ok(_) => {}
             Err(_) => return Err(format!("invalid country code in locale '{locale}'")),
@@ -95,6 +138,11 @@ mod tests {
         assert_eq!(
             Locale::from_string("en-US", '-').unwrap(),
             Locale(Language::new(LanguageCode::en), CountryCode::US)
+        );
+
+        assert_eq!(
+            Locale::from_string("zh_Hans_HK", '_').unwrap(),
+            Locale(Language::with_alphabet(LanguageCode::zh, Alphabet::Simplified), CountryCode::HK)
         );
 
         match Locale::from_string("xx_XX", '_') {

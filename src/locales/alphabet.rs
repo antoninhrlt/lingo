@@ -2,9 +2,7 @@
 // Under the MIT License
 // Copyright (c) 2022 Antonin Hérault
 
-use strum_macros::EnumString;
-
-#[derive(Debug, Clone, Eq, PartialEq, Hash, EnumString)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum Alphabet {
     Latin,
     Cyrillic,
@@ -14,6 +12,17 @@ pub enum Alphabet {
 }
 
 impl Alphabet {
+    pub fn from_code(code: &str) -> Result<Alphabet, String> {
+        match code {
+            "Latn" => Ok(Alphabet::Latin),
+            "Cyrl" => Ok(Alphabet::Cyrillic),
+            "Hans" => Ok(Alphabet::Simplified),
+            "Hant" => Ok(Alphabet::Traditional),
+            "" => Ok(Alphabet::Unspecified),
+            _ => Err(format!("no corresponding alphabet for code : {code}")),
+        }
+    }
+
     pub fn to_code(&self) -> String {
         match self {
             Alphabet::Latin => "Latn",
