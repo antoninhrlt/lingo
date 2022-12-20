@@ -5,6 +5,9 @@ version = "0.1.0"
 edition = "2021"
 description = "Internationalise a Rust program and translate strings quickly and simply. Make any software open to multiple languages"
 license = "MIT"
+repository = "https://github.com/antoninhrlt/lingo"
+readme = "README.md"
+keywords = ["languages", "l10n", "internationalization", "applications", "library"]
 
 [dependencies]
 sys-locale = "0.2.3"
