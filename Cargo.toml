@@ -3,6 +3,8 @@ name = "lingo"
 authors = ["Antonin Hérault <antonherault@gmail.com>"]
 version = "0.1.0"
 edition = "2021"
+description = "Internationalise a Rust program and translate strings quickly and simply. Make any software open to multiple languages"
+license = "MIT"
 
 [dependencies]
 sys-locale = "0.2.3"
