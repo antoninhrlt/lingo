@@ -62,6 +62,11 @@ impl Lingo {
         }
     }
 
+    /// Resets the context locale to the operating system locale
+    pub fn reset_context_locale(&mut self) {
+        self.context_locale = Locale::from_string(&sys_locale::get_locale().unwrap(), '-').unwrap();
+    }
+
     pub fn set_context_locale(&mut self, context_locale: Locale) {
         self.context_locale = context_locale;
     }

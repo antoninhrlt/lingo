@@ -27,9 +27,9 @@ pub fn get_localised_string(string: &InternationalString, locale: &Locale) -> Op
 
     // Perhaps a string exists for the same language, no matter the country
     // code.
-    for (locale, string) in string.iter() {
+    for (locale1, string) in string.iter() {
         // Does not look at the country code, just compare the language.
-        if locale.language() == locale.language() {
+        if locale1.language() == locale.language() {
             return Some(string.to_string());
         }
     }
