@@ -11,14 +11,10 @@ use crate::locales::Locale;
 pub type InternationalString = HashMap<Locale, &'static str>;
 pub type LingoStrings = HashMap<&'static str, InternationalString>;
 
-pub fn get_international_string<'a>(lingo: &Lingo, id: &str) -> Option<InternationalString> {
-    let international_string: Option<&InternationalString> = lingo.strings().get(id);
-    match international_string {
-        Some(x) => Some(x.clone()),
-        None => None,
-    }
-}
-
+/// Returns the string in the requested locale.
+/// 
+/// When there is no string for that locale, tries to return a string for the 
+/// same language, no matter the country code.
 pub fn get_localised_string(string: &InternationalString, locale: &Locale) -> Option<String> {
     match string.get(&locale) /* Option<&&str> */ {
         // A string was found for this exact locale (same language and same 
@@ -42,27 +38,45 @@ pub fn get_localised_string(string: &InternationalString, locale: &Locale) -> Op
     None
 }
 
-pub fn get_string(lingo: &Lingo, id: &str) -> Option<String> {
-    let international_string: Option<InternationalString> = get_international_string(lingo, id);
-
-    if international_string == None {
-        return None;
+impl Lingo {
+    /// Returns an `InternationalString` object from a `Lingo` object.
+    /// 
+    /// Note that it is wrapped into an `Option<T>` since the string could not 
+    /// be found for the given id.
+    pub fn get_international_string(&self, id: &str) -> Option<InternationalString> {
+        let international_string: Option<&InternationalString> = self.strings().get(id);
+        match international_string {
+            Some(x) => Some(x.clone()),
+            None => None,
+        }
     }
 
-    let international_string = international_string.unwrap();
+    /// Retrieves a string from the lingo's strings.
+    
+    /// Returns the localised string for the context locale. If it doesn't 
+    /// exist, returns the string for the default locale.
+    pub fn string(&self, id: &str) -> Option<String> {
+        let international_string: Option<InternationalString> = self.get_international_string(id);
 
-    // Tries to get the string in the context locale
-    let localised_string: Option<String> =
-        get_localised_string(&international_string, lingo.context_locale());
+        if international_string == None {
+            return None;
+        }
 
-    if localised_string != None {
-        return localised_string;
+        let international_string = international_string.unwrap();
+
+        // Tries to get the string in the context locale
+        let localised_string: Option<String> =
+            get_localised_string(&international_string, self.context_locale());
+
+        if localised_string != None {
+            return localised_string;
+        }
+
+        // The string is not available in the context locale
+
+        // Tries to get the string in the default locale
+        get_localised_string(&international_string, &self.default_locale())
     }
-
-    // The string is not available in the context locale
-
-    // Tries to get the string in the default locale
-    get_localised_string(&international_string, &lingo.default_locale())
 }
 
 #[cfg(test)]
@@ -96,7 +110,7 @@ mod tests {
 
         // Well, there is no Arabic string for "hello_world".
         // The default locale is "en", so the "en_GB" string will be chosen.
-        println!("{}", get_string(&lingo, "hello_world").unwrap());
+        println!("{}", lingo.string("hello_world").unwrap());
     }
 
     #[test]
@@ -118,6 +132,6 @@ mod tests {
 
         let lingo = Lingo::with_system_context_locale(fr, lingo_strings);
 
-        println!("{}", get_string(&lingo, "hello_world").unwrap());
+        println!("{}", lingo.string("hello_world").unwrap());
     }
 }
