@@ -98,6 +98,11 @@ impl Lingo {
         self.set_context_locale(context_locale);
         self
     }
+    
+    /// Boxes the `Lingo` object.
+    pub fn into_boxed(self) -> Box<Lingo> {
+        Box::new(self)
+    }
 }
 
 /// The way to have a Lingo object in the whole application
