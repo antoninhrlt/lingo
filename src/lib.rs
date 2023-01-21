@@ -186,3 +186,19 @@ mod builder_tests {
         assert_eq!(lingo.context_locale().to_code(), "fr_FR".to_string());
     }
 }
+
+#[cfg(test)]
+mod box_tests {
+    use crate::{Lingo, Locale};
+    
+    #[test]
+    fn into_boxed() {
+        let lingo = lingo![].into_boxed();
+        
+        let boxed_fn = |obj: Box<Lingo>| -> bool {
+            true
+        };
+        
+        assert_eq!(boxed_fn(lingo), true);
+    }
+}
