@@ -164,3 +164,20 @@ mod tests {
         //  hallo Welt
     }
 }
+
+#[cfg(test)]
+mod builder_tests {
+    use crate::{Locale};
+    
+    #[test]
+    fn with_default_locale() {
+        let lingo = lingo![].with_default_locale(Locale::from_string("en_US", '_').unwrap());
+        assert_eq!(lingo.default_locale().to_code(), "en_US".to_string());
+    }
+    
+    #[test]
+    fn with_context_locale() {
+        let lingo = lingo![].with_context_locale(Locale::from_string("fr_FR", '_').unwrap());
+        assert_eq!(lingo.context_locale().to_code(), "fr_FR".to_string());
+    }
+}
