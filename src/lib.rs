@@ -28,14 +28,14 @@ macro_rules! strings {
 #[macro_export]
 macro_rules! s {
     ($locale_str:expr, $string:expr) => {
-        (crate::locale!($locale_str), $string)
+        (locale!($locale_str), $string)
     };
 }
 
 #[macro_export]
 macro_rules! lingo {
     ($($strings:expr),*) => {
-        crate::Lingo::with_system_context_locale(crate::locale!("en"), crate::strings!($($strings),*))
+        Lingo::with_system_context_locale(locale!("en"), strings!($($strings),*))
     };
 }
 
@@ -86,13 +86,13 @@ impl Lingo {
     pub fn strings(&self) -> &LingoStrings {
         &self.strings
     }
-    
+
     /// Set default locale to `default_locale`.
     pub fn with_default_locale(mut self, default_locale: Locale) -> Lingo {
         self.set_default_locale(default_locale);
         self
     }
-    
+
     /// Set context locale to `context_locale`.
     pub fn with_context_locale(mut self, context_locale: Locale) -> Lingo {
         self.set_context_locale(context_locale);
@@ -109,7 +109,6 @@ pub trait LingoApp {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::collections::HashMap;
 
     struct MainApp {
         lingo: Lingo,
@@ -117,28 +116,26 @@ mod tests {
 
     impl MainApp {
         pub fn new() -> MainApp {
-            MainApp { 
-                lingo: Self::init_lingo()
+            MainApp {
+                lingo: Self::init_lingo(),
             }
         }
 
         pub fn run(&self) {
             println!("{}", self.lingo.string("hello").unwrap());
-        } 
+        }
     }
 
     impl LingoApp for MainApp {
         fn init_lingo() -> Lingo {
             let mut lingo = lingo![
                 (
-                    "hello", 
+                    "hello",
                     strings![
                         s!("de", "hallo Welt"),
-                        s!("en", "hello world")
-                        // ...
+                        s!("en", "hello world") // ...
                     ]
-                )
-                // ...
+                ) // ...
             ];
 
             lingo.set_context_locale(locale!("de_DE"));
@@ -167,14 +164,17 @@ mod tests {
 
 #[cfg(test)]
 mod builder_tests {
-    use crate::{Locale};
-    
+    // Macros
+    use crate::locale;
+
+    use crate::{Lingo, Locale};
+
     #[test]
     fn with_default_locale() {
         let lingo = lingo![].with_default_locale(Locale::from_string("en_US", '_').unwrap());
         assert_eq!(lingo.default_locale().to_code(), "en_US".to_string());
     }
-    
+
     #[test]
     fn with_context_locale() {
         let lingo = lingo![].with_context_locale(Locale::from_string("fr_FR", '_').unwrap());
